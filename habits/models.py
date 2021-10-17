@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models.fields.related import ForeignKey
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -18,5 +19,24 @@ from django.db.models.fields.related import ForeignKey
 
 # So you'll need to find a way, given a habit description and a list of when he did it in the past, to score the user "fitness to the habit".
 
+class Interval(models.Model):
+    name = models.CharField(max_length=512)
+    def __str__(self):
+        return self.name
+
 class Habit(models.Model):
+    name = models.CharField(max_length=512)
+    content = models.TextField(max_length=1024)
+    start_date = models.DateField(auto_now_add=False)
+    end_date = models.DateField(auto_now_add=False)
+    interval = models.ForeignKey(Interval, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.name
+
+class State(models.Model):
+    date = models.DateField(auto_now_add=False)
+    is_done = models.BooleanField()
+    habit = models.ForeignKey(Habit, on_delete=models.CASCADE)
+
 

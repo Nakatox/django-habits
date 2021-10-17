@@ -1,0 +1,154 @@
+body{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: rgb(48, 44, 64);
+    color: white;
+}
+.user_name{
+    font-size: 35px;
+    color: white;
+    text-align: center;
+}
+.user_name>span{
+    font-weight: bold;
+}
+
+.logout{
+    background-color: #0D86FF;
+    width: 100px;
+    height: 22px;
+    border-radius: 10px;
+    text-align: center
+}
+.modif_habit{
+    width: 150px;
+    border-radius: 5px;
+}
+.create_account{
+    width: 150px;
+}
+
+.delete{
+    border: solid #0D86FF 2px;
+    background-color: #0D86FF;
+    width: 150px;
+    height: 22px;
+    border-radius: 5px;
+    text-align: center;
+    color: white;
+    align-self: center;
+    justify-content: center;
+    margin-left: 15px;
+    margin-top: 10px;
+}
+.logout>a{
+    text-align: center;
+    text-decoration: none;
+    color: white;
+}
+
+.title_all_habit{
+    color: white;
+    font-size: 30px;
+    text-align: center;
+}
+.habit_container{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.habit{
+    background-color: #3a354d;
+    border: solid #0D86FF 2px;
+    border-radius: 10px;
+    margin: 10px 20px;
+    padding: 5px 10px;
+}
+.habit>p:nth-child(1){
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+}
+.time_left{
+    font-size: 20px;
+}
+
+.start_date{
+    text-align: center;
+    font-size: 15px;
+    margin: 0;
+}
+
+.stats{
+    display: flex;
+    flex-direction: row;
+    color: white;
+
+}
+.stats>p:nth-child(3){
+    font-size: 10px;
+    align-self: center;
+    margin-left: 5px;
+}
+.stats>progress:nth-child(2){
+    border-radius: 7px; 
+    width: 100px;
+    height: 17px;
+    align-self: center;
+}
+
+input[type="checkbox"]:checked {
+    animation: pop 180ms ease-in;
+    border: none;
+}
+input[type="checkbox"] {
+    transform: scale(2);
+    align-self: center;
+    justify-self: center;
+    text-align: center;
+    justify-content: center;
+    margin: 10px 0;
+    margin-left: 80px;
+}
+
+@keyframes pop {
+    0% {
+      transform: scale(0);
+    }
+    90% {
+      transform: scale(1.4);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+.form_add{
+    display: flex;
+    flex-direction: column;
+}
+.form_add>*{
+    text-align: center;
+    align-self: center;
+}
+.form_add>label{
+    margin-top: 10px;
+}
+.form_add>input,.form_add>select{
+    width: 300px;
+}
+.form_add>textarea{
+    width: 500px;
+}
+
+.form_add>input[type="submit"]{
+    border: solid #0D86FF 2px;
+    background-color: #0D86FF;
+    width: 150px;
+    height: 22px;
+    border-radius: 5px;
+    text-align: center;
+    color: white;
+    align-self: center;
+    justify-content: center;
+    margin-top: 15px;
+}

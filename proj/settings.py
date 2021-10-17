@@ -71,7 +71,11 @@ TEMPLATES = [
 LOGIN_REDIRECT_URL = '/habits/'
 LOGOUT_REDIRECT_URL = '/habits/'
 
+DATE_INPUT_FORMATS = ['%d-%m-%Y']
+
 WSGI_APPLICATION = 'proj.wsgi.application'
+
+STATIC_URL = '/static/'
 
 
 # Database

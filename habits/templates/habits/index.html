@@ -1,23 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'habits/style.css' %}">
     <title>Document</title>
 </head>
 <body>
-    {% block title %}Home{% endblock %}
-    <br>
     {% block content %}
-        {% if user.is_authenticated %}
-            Hi {{ user.username }}!
-            <p><a href="{% url 'logout' %}">Log Out</a></p>
+    {% load index %}
+    {% if user.is_authenticated %}
+
+            <p class="user_name">Hello <span>{{ user.username }}</span> !</p> 
+            <p class="logout"><a href="{% url 'logout' %}">Log Out</a></p>
+            <h2 class="title_all_habit">My habits</h2>
+            <p class="logout"><a href="{% url 'add-habit' %}">Add habit</a></p>
+            <div class="habit_container">
+                {% for habit in habits %}
+                    <div class="habit">
+                        <p>{{habit.name}}</p>
+                        <p class="start_date">(started: {{habit.start_date}})</p>
+                        <p>{{habit.content}}</p>
+                        <div class="stats">
+                            <p>Rigor :</p>
+                            <progress value="{{stats|index:habit.id}}" max="100"> {{stats|index:habit.id}}% </progress>
+                            <p>({{stats|index:habit.id}}%)</p>
+                        </div>
+                        {% if habit.end_date < today %}
+                            <p>This habit is finish</p>
+                        {% endif %}
+                        {% for e in tab %}
+                            {% if habit.interval == everyDay or habit.interval == everyDayEWeek %}
+                                {% if e.habit_id == habit.id and e.date ==  date_now %}
+                                    <p class="time_left">Time left :{{ timeLeft|index:e.id }}</p>
+                                    <form action="{% url 'check' %}?id={{e.id}}&is_done={% if e.is_done %}0{% else %}1{% endif %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="checkbox" onclick=this.form.submit() name="done{{e.id}}" {% if e.is_done %} checked {% endif %} "" >
+                                    </form>
+                                {% endif %}
+                            {% elif  habit.interval == everyWeeks %}
+                                {% if e.habit_id == habit.id and weeksOfState|index:e.date %}
+                                    <p class="time_left">Time left :{{ timeLeft|index:e.id }}</p>
+                                    <form action="{% url 'check' %}?id={{e.id}}&is_done={% if e.is_done %}0{% else %}1{% endif %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="checkbox" onclick=this.form.submit() name="done{{e.id}}" {% if e.is_done %} checked {% endif %} "" >
+                                    </form>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        <p class="logout modif_habit"><a href="{% url 'modif-habit' %}?id={{habit.id}}">Modif this habit</a></p>
+
+                        <form action="{% url 'delete' %}?id={{habit.id}}" method="POST">
+                            {% csrf_token %}
+                            <button class="delete" onclick=this.form.submit()>Delete this habit</button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+
         {% else %}
-            <p>You are not logged in</p>
-            <a href="{% url 'login' %}">Log In</a>
+
+            <p class="title_all_habit">You are not logged in</p>
+            <p class="logout"><a href="{% url 'login' %}">Log In</a></p>
             <br>
-            <a href="{% url 'register' %}">Create an account</a>
+            <p class="logout create_account"><a href="{% url 'register' %}">Create an account</a></p>
+
         {% endif %}
     {% endblock %}
 </body>

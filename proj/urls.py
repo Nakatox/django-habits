@@ -22,5 +22,9 @@ urlpatterns = [
     path("habits/auth/", include('django.contrib.auth.urls')),
     path("habits/auth/register", views.register, name= "register"),
     path("habits/",view = views.index, name="home"),
+    path("habits/check",view = views.check, name="check"),
+    path("habits/delete",view = views.delete, name="delete"),
+    path("habits/add",view = views.addHabit, name="add-habit"),
+    path("habits/modif",view = views.modifHabit, name="modif-habit"),
 
 ]
