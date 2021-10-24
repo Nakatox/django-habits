@@ -1,5 +1,3 @@
-from django.contrib.auth.models import User
-from django.http.response import HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django import forms
 from habits.models import Habit, Interval, State 
@@ -9,7 +7,6 @@ from django.contrib.auth.forms import UserCreationForm
 
 from datetime import date, timedelta
 import datetime
-from django import template
 
 
 
@@ -93,8 +90,13 @@ def same_week(date1, date2):
 def addHabit(request):
     if request.user is not None:
         if request.method == 'POST':
+            if request.POST.get('interval') == "none":
+                request.POST._mutable = True
+                request.POST['interval'] = None
             form = addHabitForm(request.POST)
             interval2 = form['interval'].value()
+            days = request.POST.getlist('days[]')
+            print(type(request.POST.get('interval')))
             if form.is_valid():
 
                 name = form.cleaned_data.get('name')
@@ -103,21 +105,26 @@ def addHabit(request):
                 end_date = form.cleaned_data.get('end_date')
                 interval = form.cleaned_data.get('interval')
 
-                #We add the values to a new habit
-                habitCreated = Habit.objects.create(name = name, content = content, start_date = start_date, end_date = end_date, interval = interval, user_id = request.user.id)
+                # We add the values to a new habit
+                habitCreated = Habit.objects.create(name = name, content = content, start_date = start_date, end_date = end_date, days = " ".join(days), interval = interval, user_id = request.user.id)
 
                 habitCreated.save()
 
-                #we add for each day or week a state of the habit
+                # we add for each day or week a state of the habit
                 for single_date in daterange(start_date, end_date):
-                    if interval2 == "2":
-                        State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 0, habit_id = habitCreated.id)
-                    elif interval2 == "1":
-                        if single_date.weekday() == 6:
+                    if days:
+                        for e in days:
+                            if int(e) == single_date.weekday():
+                                State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 0, habit_id = habitCreated.id)
+                    elif interval2 != "none":
+                        if interval2 == "2":
                             State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 0, habit_id = habitCreated.id)
-                    elif interval2 == "3":
-                        if not single_date.weekday() == 6 and not single_date.weekday() == 5:
-                            State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 0, habit_id = habitCreated.id)
+                        elif interval2 == "1":
+                            if single_date.weekday() == 6:
+                                State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 0, habit_id = habitCreated.id)
+                        elif interval2 == "3":
+                            if not single_date.weekday() == 6 and not single_date.weekday() == 5:
+                                State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 0, habit_id = habitCreated.id)
 
                 return redirect('home')
         else:
@@ -135,18 +142,24 @@ def modifHabit(request):
 
     if request.user is not None and Habit.objects.get(id = id_habit).user_id == request.user.id:
         habit = Habit.objects.get(id = id_habit)
-        habit_interval = Interval.objects.get(name = habit.interval).id
+        if habit.interval is not None:
+            habit_interval = Interval.objects.get(name = habit.interval).id
+        else:
+            habit_interval = ""
         start_date = habit.start_date.strftime("%Y-%m-%d")
         end_date = habit.end_date.strftime("%Y-%m-%d")
         data = {"name": habit.name,"content":habit.content,"start_date":start_date,"end_date":end_date,"interval":habit_interval}
-
         if request.method == 'POST':
             form = addHabitForm(request.POST)
             interval2 = form['interval'].value()
+            days = request.POST.getlist('days[]')
+            if request.POST.get('interval') == "none":
+                request.POST._mutable = True
+                request.POST['interval'] = None
             
             if form.is_valid():
                 state_checked = {}
-                Habit.objects.filter(id = id_habit).update(name = form.cleaned_data.get('name'),content = form.cleaned_data.get('content'),start_date = form.cleaned_data.get('start_date'),end_date = form.cleaned_data.get('end_date'),interval = form.cleaned_data.get('interval'))
+                Habit.objects.filter(id = id_habit).update(name = form.cleaned_data.get('name'),content = form.cleaned_data.get('content'),start_date = form.cleaned_data.get('start_date'),end_date = form.cleaned_data.get('end_date'),interval = form.cleaned_data.get('interval'),days = " ".join(days))
                 
                 for i in State.objects.filter(habit_id = id_habit):
                     if i.is_done == 1: 
@@ -156,23 +169,31 @@ def modifHabit(request):
 
 
                 for single_date in daterange(form.cleaned_data.get('start_date'), form.cleaned_data.get('end_date')):
-                    if interval2 == "2":
-                        if single_date in state_checked:
-                            State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 1, habit_id = id_habit)
-                        else:
-                            State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 0, habit_id = id_habit)
-                    elif interval2 == "1":
-                        if single_date.weekday() == 6:
+                    if days:
+                        for e in days:
+                            if int(e) == single_date.weekday():
+                                if single_date in state_checked:
+                                    State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 1, habit_id = id_habit)
+                                else:
+                                    State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 0, habit_id = id_habit)
+                    elif interval2 != "none":  
+                        if interval2 == "2":
                             if single_date in state_checked:
                                 State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 1, habit_id = id_habit)
                             else:
                                 State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 0, habit_id = id_habit)
-                    elif interval2 == "3":
-                        if not single_date.weekday() == 6 and not single_date.weekday() == 5:
-                            if single_date in state_checked:
-                                State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 1, habit_id = id_habit)
-                            else:
-                                State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 0, habit_id = id_habit)
+                        elif interval2 == "1":
+                            if single_date.weekday() == 6:
+                                if single_date in state_checked:
+                                    State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 1, habit_id = id_habit)
+                                else:
+                                    State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 0, habit_id = id_habit)
+                        elif interval2 == "3":
+                            if not single_date.weekday() == 6 and not single_date.weekday() == 5:
+                                if single_date in state_checked:
+                                    State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 1, habit_id = id_habit)
+                                else:
+                                    State.objects.create(date = single_date.strftime("%Y-%m-%d"), is_done = 0, habit_id = id_habit)
 
 
                 return redirect('home')
@@ -181,7 +202,7 @@ def modifHabit(request):
     else:
         return redirect('home')
 
-    return render(request, "habits/modifHabit.html",{'form': addHabitForm,"id_habit":id_habit,"data":{1: data["name"],2:data["content"],3:data["start_date"],4:data["end_date"],5:data["interval"]}})
+    return render(request, "habits/modifHabit.html",{'form': addHabitForm,"id_habit":id_habit,"habit":habit,"data":{1: data["name"],2:data["content"],3:data["start_date"],4:data["end_date"],5:data["interval"]}})
 
 
 class DateInput(forms.DateInput):

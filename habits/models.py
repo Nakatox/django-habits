@@ -29,7 +29,8 @@ class Habit(models.Model):
     content = models.TextField(max_length=1024)
     start_date = models.DateField(auto_now_add=False)
     end_date = models.DateField(auto_now_add=False)
-    interval = models.ForeignKey(Interval, on_delete=models.CASCADE)
+    days = models.CharField(max_length=10, null=True)
+    interval = models.ForeignKey(Interval, on_delete=models.CASCADE, null=True, default='', blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     def __str__(self):
         return self.name

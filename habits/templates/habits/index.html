@@ -32,7 +32,7 @@
                             <p>This habit is finish</p>
                         {% endif %}
                         {% for e in tab %}
-                            {% if habit.interval == everyDay or habit.interval == everyDayEWeek %}
+                            {% if habit.interval == everyDay or habit.interval == everyDayEWeek or habit.interval == null %}
                                 {% if e.habit_id == habit.id and e.date ==  date_now %}
                                     <p class="time_left">Time left :{{ timeLeft|index:e.id }}</p>
                                     <form action="{% url 'check' %}?id={{e.id}}&is_done={% if e.is_done %}0{% else %}1{% endif %}" method="POST">

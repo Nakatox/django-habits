@@ -27,18 +27,31 @@
                 <p class="end_date_hi" hidden>{{data|index:4}}</p>
             <label for="id_interval">Interval:</label>
                 <select name="interval" required="" id="id_interval">
+                    <option value="none" {% if data|index:5 == null %} selected {% endif %}></option>
                     <option value="1" {% if data|index:5 == 1 %} selected {% endif %}>1 time per week</option>
                     <option value="2" {% if data|index:5 == 2 %} selected {% endif %}>1 time per day</option>
                     <option value="3" {% if data|index:5 == 3 %} selected {% endif %}>every day (except weekends)</option>
                 </select>
+            <p>OR</p>
+            <div>
+                <label for="days">Monday</label>
+                    <input type="checkbox" {% if "0"|index2:habit.days %} checked {% endif %} name="days[]" value="0" id="id_days">
+                <label for="days">Tuesday</label>
+                    <input type="checkbox" {% if "1"|index2:habit.days %} checked {% endif %} name="days[]" value="1" id="id_days">
+                <label for="days">Wednesday</label>
+                    <input type="checkbox" {% if "2"|index2:habit.days %} checked {% endif %} name="days[]" value="2" id="id_days">
+                <label for="days">Thursday</label>
+                    <input type="checkbox" {% if "3"|index2:habit.days %} checked {% endif %} name="days[]" value="3" id="id_days">
+                <label for="days">Friday</label>
+                    <input type="checkbox" {% if "4"|index2:habit.days %} checked {% endif %} name="days[]" value="4" id="id_days">
+                <label for="days">Saturday</label>
+                    <input type="checkbox" {% if "5"|index2:habit.days %} checked {% endif %} name="days[]" value="5" id="id_days">
+                <label for="days">Sunday</label>
+                    <input type="checkbox" {% if "6"|index2:habit.days %} checked {% endif %} name="days[]" value="6" id="id_days">
+            </div>
             <input type="text" name="id_habit" value="{{id_habit}}" hidden>
         <input type="submit" value="Modif this Habit">
     </form>
-
-
-    
-    <input type="submit" value="Modif this Habit">
-
 </body>
 <script>
     document.querySelector('#id_start_date').value = document.querySelector('.start_date_hi').textContent

@@ -14,7 +14,39 @@
     <br>
     <form action="{% url 'add-habit' %}" method="POST" class="form_add">
         {% csrf_token %}
-        {{ form }}
+        <label for="id_name">Name:</label>
+                <input type="text" name="name" maxlength="512" required="" id="id_name">
+            <label for="id_content">Content:</label>
+                <textarea name="content" cols="40" rows="10" maxlength="1024" required="" id="id_content"></textarea>
+            <label for="id_start_date">Start date:</label>
+                <input type="date" name="start_date" required="" id="id_start_date">
+            <label for="id_end_date">End date:</label>
+                <input type="date" name="end_date" required="" id="id_end_date">
+            <label for="id_interval">Interval:</label>
+                <select name="interval" id="id_interval">
+                    <option value="none"></option>
+                    <option value="1">1 time per week</option>
+                    <option value="2">1 time per day</option>
+                    <option value="3">every day (except weekends)</option>
+                </select>
+            <p>OR</p>
+            <div>
+                <label for="days">Monday</label>
+                    <input type="checkbox" name="days[]" value="0" id="id_days">
+                <label for="days">Tuesday</label>
+                    <input type="checkbox" name="days[]" value="1" id="id_days">
+                <label for="days">Wednesday</label>
+                    <input type="checkbox" name="days[]" value="2" id="id_days">
+                <label for="days">Thursday</label>
+                    <input type="checkbox" name="days[]" value="3" id="id_days">
+                <label for="days">Friday</label>
+                    <input type="checkbox" name="days[]" value="4" id="id_days">
+                <label for="days">Saturday</label>
+                    <input type="checkbox" name="days[]" value="5" id="id_days">
+                <label for="days">Sunday</label>
+                    <input type="checkbox" name="days[]" value="6" id="id_days">
+            </div>
+            <input type="text" name="id_habit" value="{{id_habit}}" hidden>
         <input type="submit" value="Add this Habit">
     </form>
 </body>
