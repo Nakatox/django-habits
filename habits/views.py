@@ -14,6 +14,7 @@ import datetime
 
 def index(request):
     if request.user is not None:
+
         nbDone = {}
         nbState = {}
         stats = {}
@@ -26,7 +27,6 @@ def index(request):
             nbDone.update({habit.id:{}})
             nbState.update({habit.id:{}})
 
-        
         is_done = State.objects.filter(habit_id = habits)
         today = date.today()
 
@@ -62,12 +62,12 @@ def index(request):
 
     return render(request, "habits/index.html",{'stats':stats,'timeLeft':timeLeft,'everyDay': everyDay,'everyDayEWeek':everyDayEWeek,'everyWeeks':everyWeeks,'habits': habits, 'is_done':is_done, 'tab':tab, 'date_now': today, 'weeksOfState': weeksOfState})
 
+
 def delete(request):
     if request.method == 'POST' and request.user is not None:
         a = Habit.objects.filter(id=request.GET.get('id'))
         a.delete()
     return redirect('home')
-
 
 
 def check(request):
@@ -134,6 +134,7 @@ def addHabit(request):
 
     return render(request, "habits/addHabit.html",{'form': addHabitForm})
 
+
 def modifHabit(request):
     if request.GET.get('id') is not None:
         id_habit = request.GET.get('id')
@@ -142,17 +143,21 @@ def modifHabit(request):
 
     if request.user is not None and Habit.objects.get(id = id_habit).user_id == request.user.id:
         habit = Habit.objects.get(id = id_habit)
+
         if habit.interval is not None:
             habit_interval = Interval.objects.get(name = habit.interval).id
         else:
             habit_interval = ""
+
         start_date = habit.start_date.strftime("%Y-%m-%d")
         end_date = habit.end_date.strftime("%Y-%m-%d")
         data = {"name": habit.name,"content":habit.content,"start_date":start_date,"end_date":end_date,"interval":habit_interval}
+        
         if request.method == 'POST':
             form = addHabitForm(request.POST)
             interval2 = form['interval'].value()
             days = request.POST.getlist('days[]')
+
             if request.POST.get('interval') == "none":
                 request.POST._mutable = True
                 request.POST['interval'] = None
@@ -208,6 +213,7 @@ def modifHabit(request):
 class DateInput(forms.DateInput):
     input_type = 'date'
 
+
 class addHabitForm(forms.ModelForm):
     class Meta:
         model = Habit
@@ -216,8 +222,6 @@ class addHabitForm(forms.ModelForm):
             'end_date': DateInput(),
             'start_date': DateInput(),
         }
-
-
 
 
 def register(request):
