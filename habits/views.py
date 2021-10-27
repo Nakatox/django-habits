@@ -18,6 +18,7 @@ def index(request):
         nbDone = {}
         nbState = {}
         stats = {}
+        statsPerday = {0:{1:0,2:0},1:{1:0,2:0},2:{1:0,2:0},3:{1:0,2:0},4:{1:0,2:0},5:{1:0,2:0},6:{1:0,2:0}}
 
         habits = Habit.objects.filter(user_id = request.user.id)
 
@@ -47,7 +48,9 @@ def index(request):
             b = same_week(a, today)
             if e.date <= today:
                 nbState[e.habit_id].update({e.id: e.is_done})
+                statsPerday[e.date.weekday()][2] += 1
             if e.is_done == 1:
+                statsPerday[e.date.weekday()][1] += 1
                 nbDone[e.habit_id].update({e.id: e.is_done})
 
             nbDone.update({})
@@ -56,11 +59,17 @@ def index(request):
 
         for habit in habits:
             if len(nbState[habit.id]) > 0:
-                stats.update({habit.id : (len(nbDone[habit.id])*100)/len(nbState[habit.id])})
+                stats.update({habit.id : round((len(nbDone[habit.id])*100)/len(nbState[habit.id]))})
             else:
                 stats.update({habit.id : 0})
+        
+        for e in statsPerday:
+            if statsPerday[e][2] != 0 and statsPerday[e][1] != 0:
+                statsPerday[e][1] = round(statsPerday[e][1]*100/statsPerday[e][2])
+            else:
+                statsPerday[e][1] = 0
 
-    return render(request, "habits/index.html",{'stats':stats,'timeLeft':timeLeft,'everyDay': everyDay,'everyDayEWeek':everyDayEWeek,'everyWeeks':everyWeeks,'habits': habits, 'is_done':is_done, 'tab':tab, 'date_now': today, 'weeksOfState': weeksOfState})
+    return render(request, "habits/index.html",{'statsPerday':statsPerday,'stats':stats,'timeLeft':timeLeft,'everyDay': everyDay,'everyDayEWeek':everyDayEWeek,'everyWeeks':everyWeeks,'habits': habits, 'is_done':is_done, 'tab':tab, 'date_now': today, 'weeksOfState': weeksOfState})
 
 
 def delete(request):

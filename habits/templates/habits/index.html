@@ -15,6 +15,59 @@
 
             <p class="user_name">Hello <span>{{ user.username }}</span> !</p> 
             <p class="logout"><a href="{% url 'logout' %}">Log Out</a></p>
+            <h2 class="title_all_habit">Stats habit done per day</h2>
+
+            <div class="days-stats" style="display: flex; align-self:center; text-align:center; justify-content:space-around; margin:0 15vw">
+                {% for e in statsPerday %}
+                    {% if e == 0 %}
+                    <div style="background-color:#3a354d;border:solid #0D86FF 2px; padding: 5px 10px; border-radius:10px">
+                        <p>Monday</p>
+                        <p>Rigor : {{statsPerday|index:e|index:1}} %</p>
+                    </div>
+                    {% endif %}
+                    {% if e == 1 %}
+                    <div style="background-color:#3a354d;border:solid #0D86FF 2px; padding: 5px 10px; border-radius:10px">
+                        <p>Tuesday</p>
+                        <p>Rigor : {{statsPerday|index:e|index:1}} %</p>
+                    </div>
+
+                    {% endif %}
+                    {% if e == 2 %}
+                    <div style="background-color:#3a354d;border:solid #0D86FF 2px; padding: 5px 10px; border-radius:10px">
+                        <p>Wednesday</p>
+                        <p>Rigor : {{statsPerday|index:e|index:1}} %</p>
+                    </div>
+                    {% endif %}
+                    {% if e == 3 %}
+                    <div style="background-color:#3a354d;border:solid #0D86FF 2px; padding: 5px 10px; border-radius:10px">
+                        <p>Thursday</p>
+                        <p>Rigor : {{statsPerday|index:e|index:1}} %</p>
+                    </div>
+
+                    {% endif %}
+                    {% if e == 4 %}
+                    <div style="background-color:#3a354d;border:solid #0D86FF 2px; padding: 5px 10px; border-radius:10px">
+                        <p>Friday</p>
+                        <p>Rigor : {{statsPerday|index:e|index:1}} %</p>
+                    </div>
+
+                    {% endif %}
+                    {% if e == 5 %}
+                    <div style="background-color:#3a354d;border:solid #0D86FF 2px; padding: 5px 10px; border-radius:10px">
+                        <p>Saturday</p>
+                        <p>Rigor : {{statsPerday|index:e|index:1}} %</p>
+                    </div>
+
+                    {% endif %}
+                    {% if e == 6 %}
+                    <div style="background-color:#3a354d;border:solid #0D86FF 2px; padding: 5px 10px; border-radius:10px">
+                        <p>Sunday</p>
+                        <p>Rigor : {{statsPerday|index:e|index:1}} %</p>
+                    </div>
+
+                    {% endif %}
+                {% endfor %}
+            </div>
             <h2 class="title_all_habit">My habits</h2>
             <p class="logout"><a href="{% url 'add-habit' %}">Add habit</a></p>
             <div class="habit_container">
@@ -59,6 +112,7 @@
                     </div>
                 {% endfor %}
             </div>
+            
 
         {% else %}
 
